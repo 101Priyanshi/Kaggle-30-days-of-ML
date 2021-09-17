@@ -20,3 +20,22 @@
 * There's no simple threshold for what constitutes a large vs. small dataset. But if your model takes a couple minutes or less to run, it's probably worth switching to cross-validation.
 * Alternatively, you can run cross-validation and see if the scores for each experiment seem close. If each experiment yields the same results, a single validation set is probably sufficient.
 * Using cross-validation yields a much better measure of model quality, with the added benefit of cleaning up our code: note that we no longer need to keep track of separate training and validation sets. So, especially for small datasets, it's a good improvement!
+# Data Leakage
+* Data leakage (or leakage) happens when your training data contains information about the target, but similar data will not be available when the model is used for prediction.
+* leads to high performance on the training set (possibly even the validation data), but the model will perform poorly in production.
+## Types of leakage
+1. target leakage <br/>
+2. train-test contamination.
+### Target leakage
+* occurs when your predictors include data that will not be available at the time you make predictions.
+* People take antibiotic medicines after getting pneumonia in order to recover. The raw data shows a strong relationship between those columns, but took_antibiotic_medicine is frequently changed after the value for got_pneumonia is determined. This is target leakage.
+
+| got_pneumonia| age | weight | male |   took_antibiotic_medicine    |
+|:------------:|:---:|:------:|:----:|:-----------------------------:|
+|False	        |65	  |100	    |False	| False	...                     |
+|False	        |72   |130	    |True	 | False	...                     |
+|True	         |58	  |100	    |False	| True	...                      |
+
+* To prevent this type of data leakage, any variable updated (or created) after the target value is realized should be excluded.
+### Train-test contamination
+example: preprocessing (like fitting an imputer for missing values) before calling train_test_split()
